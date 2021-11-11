@@ -1,0 +1,9 @@
+.centralnoPoravnanje {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.levoPoravnanje{
+    margin-left: 80px;
+}

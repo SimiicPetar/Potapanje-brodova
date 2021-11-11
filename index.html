@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Potapanje brodova</title>
+	<link rel="stylesheet" type="text/css" href="stilovi.css">
+	<script type="text/javascript" src="funkcije.js"></script>
+</head>
+
+<body id="idBody">
+
+<h1 style="margin-left: 120px;">POTAPANJE BRODOVA</h1><br><br>
+
+<p class="levoPoravnanje"> <b>Odaberite dimenzije table:</b> </p> 
+<div class="levoPoravnanje">Broj redova: <input type="text" id="brRedova"></div><br>
+<div class="levoPoravnanje">Broj kolona: <input type="text" id="brKolona"></div><br>
+<input type="button" style="margin-left: 160px;" id="idButton" value="Unesi" onClick="kreirajTabelu(document.getElementById('brRedova').value, document.getElementById('brKolona').value);"><br><br>
+<div class="levoPoravnanje">Preostalih pokusaja: <p id="idPreostaloPokusaja"></p> </div>
+<div class="levoPoravnanje">Broj poena: <p id="idBrojPoena"></p> </div>
+
+<script>
+
+
+var body = document.body;
+var tabela=null, brRedova, brKolona, ukupnoPolja;
+var brodovi=[], brBrodova, brPokusaja, gadjanePozicije=[], brGadjanihPozicija=0, brPogodaka; 
+var brPreostalihPokusajaParagraph = document.getElementById("idPreostaloPokusaja");
+var brPogodakaParagraph = document.getElementById("idBrojPoena");
+
+
+
+
+function kreirajTabelu(brRed, brKol){ 
+
+	if (document.contains(document.getElementById("idTabela"))) { 
+            document.getElementById("idTabela").remove();
+	}
+
+	if(Number(brRed)<5 || Number(brKol)<5){ 
+		brRedova=5;
+		brKolona=5;
+		 
+		
+	}else{ 
+		brRedova=Number(brRed);
+		brKolona=Number(brKol);
+		
+	}
+	brPokusaja = Math.floor((brRedova * brKolona)/2 + 10);
+
+	brPogodaka=0; 
+	var rbrCelijeTabele=-1;
+	brPreostalihPokusajaParagraph.innerHTML=brPokusaja; 
+	brPogodakaParagraph.innerHTML=brPogodaka;
+
+
+    tabela  = document.createElement('table'); 
+	tabela.id='idTabela'; 
+    tabela.style.border = '1px solid black';
+	tabela.style.marginLeft = '80px';
+
+    for(var i = 0; i < brRedova; i++){ 
+        var tr = tabela.insertRow();
+        for(var j = 0; j < brKolona; j++){ 
+		
+				rbrCelijeTabele++;
+		
+                var td = tr.insertCell();
+				td.width='60px';
+				td.height='60px';
+				
+				td.id=rbrCelijeTabele;
+                td.appendChild(document.createTextNode('  '));
+                td.style.border = '1px solid black';
+        }
+    }
+	
+	
+	tabela.addEventListener("click", pokusaj); 
+    body.appendChild(tabela);
+	
+	ukupnoPolja=brRedova*brKolona;
+	brBrodova=Math.floor(ukupnoPolja/3); 
+	
+	brodovi=dodajBrodove(brBrodova, ukupnoPolja-1);
+	
+	
+	
+}
+
+
+function dodajBrodove(brBrodova, ukupnoPolja){
+
+
+	var granica = brBrodova,
+    kolicina = brBrodova,
+    donjaGranica = 0,
+    gornjaGranica = ukupnoPolja,
+    jedinstveniRandomNiz = [];
+
+	if (kolicina > granica) granica = kolicina; 
+	
+	while (jedinstveniRandomNiz.length < granica) {
+		var rndBroj = Math.round(Math.random()*(gornjaGranica - donjaGranica) + donjaGranica);
+			if (jedinstveniRandomNiz.indexOf(rndBroj) == -1) { 
+				jedinstveniRandomNiz.push( rndBroj );
+			}
+	}
+	
+	return jedinstveniRandomNiz;
+}
+
+function pokusaj(n){
+
+	
+	var idPozicijaKlik= n.target.id;
+	
+	var brPreostalihPokusajaParagraph = document.getElementById("idPreostaloPokusaja");
+	var brPogodakaParagraph = document.getElementById("idBrojPoena");
+	
+	if(brPokusaja>0){
+	
+		brPokusaja--;
+		brPreostalihPokusajaParagraph.innerHTML=brPokusaja;
+	
+		if(idPozicijaKlik>-1){
+			if(jeUNizu(Number(idPozicijaKlik), brodovi)==true && gadjanePozicije.indexOf(idPozicijaKlik) == -1){
+				gadjanePozicije.push( idPozicijaKlik ); 
+				n.target.style.background = "url('ship.jpg')";
+				brPogodaka++;
+				
+				if(brPogodaka==brBrodova)
+					brPogodakaParagraph.innerHTML=brPogodaka + ' POBEDILI STE!';
+				else
+					brPogodakaParagraph.innerHTML=brPogodaka;
+				}
+			else if(jeUNizu(Number(idPozicijaKlik), brodovi)==false)
+				n.target.style.background = "url('water.jpg')";	
+			
+		}
+		
+	}
+	if(brPokusaja==0 && brPogodaka<brBrodova){
+		brPogodakaParagraph.innerHTML=brPogodaka + ' IZGUBILI STE';
+	}
+}
+
+
+function jeUNizu(vrednost, niz) {
+	var rez=false;
+	if(niz.indexOf(vrednost) > -1)
+		rez=true;
+
+	return rez;
+}
+
+
+
+</script>
+
+
+
+</body>
+
+</html>
